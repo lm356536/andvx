@@ -5,7 +5,7 @@
         </div>
         <div class="qlContent-body">
             <div style="height: 80vh;">
-                <do-fc-designer ref="fcDesignerRef">
+                <do-fc-designer ref="fcDesignerRef" :locale="locale">
                     <template #btns>
                         <a-space>
                             <a-button type="primary" @click="viewer($refs.fcDesignerRef)">预览</a-button>
@@ -44,6 +44,8 @@ import { Modal, Textarea, Space, Button } from 'ant-design-vue';
 import Breadcrumb from "../../../components/breadcrumb";
 import DoFcDesigner from "../../../components/doFcDesigner";
 import { initRules } from "../../../components/doFcDesigner/utils/parse";
+import ZhCn from "../../../components/doFcDesigner/locale/zh-cn";
+import En from "../../../components/doFcDesigner/locale/en";
 import formCreate from '@form-create/ant-design-vue';
 import * as CodeMirror from 'codemirror/lib/codemirror';
 import 'codemirror/lib/codemirror.css';
@@ -54,6 +56,8 @@ export default defineComponent({
     components: { Breadcrumb, DoFcDesigner, FormCreate: formCreate.$form(), AModal: Modal, ATextarea: Textarea, ASpace: Space, AButton: Button },
     mixins: [dragModal],
     setup() {
+        const locale=ref(ZhCn)
+     
         const editorRef = ref(),
             cMirror = ref(),
             modal = ref({
@@ -158,6 +162,7 @@ export default defineComponent({
         };
 
         return {
+            locale,
             editorRef,
             modal,
             form,
@@ -168,6 +173,6 @@ export default defineComponent({
             onAddValue,
             getResult,
         };
-    },
+    }
 });
 </script>

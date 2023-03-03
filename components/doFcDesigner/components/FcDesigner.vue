@@ -250,6 +250,7 @@
 <script>
 import configForm from '../config/base/form2';
 import configField from '../config/base/field2';
+import configValidate from '../config/base/validate2';
 import { defineComponent, ref, reactive, toRefs, provide, nextTick, onMounted } from 'vue';
 // import configForm from "../config/base/form";
 import field from '../config/base/field';
@@ -263,7 +264,7 @@ import formCreate from '@form-create/ant-design-vue';
 import createMenu from '../config/menu';
 import { upper, useLocale } from '../utils/index2';
 import uniqueId from '@form-create/utils/lib/unique';
-
+import ZhCn from "../locale/zh-cn";
 export default defineComponent({
   name: 'FcDesigner',
   components: {
@@ -278,9 +279,12 @@ export default defineComponent({
         active: null,
       })
     );
+   
     const { menu, height, config, mask, locale } = toRefs(props);
-    const t = useLocale(locale).t,
-      moveRule = ref(),
+
+     const t = useLocale(locale).t;
+     console.log('props:', props)
+     const  moveRule = ref(),
       addRule = ref(),
       added = ref(),
       activeTab = ref('form'),
@@ -293,8 +297,8 @@ export default defineComponent({
         api: {},
       }),
       form = ref({
-        rule: [],
-        // rule: form({t}),
+        // rule: [],
+        rule: configForm({t}),
         option: {
           form: {
             layout: 'vertical',
@@ -324,7 +328,7 @@ export default defineComponent({
         },
       }),
       validateForm = ref({
-        rule: [],
+        rule: configValidate({t}),
         api: {},
         value: null,
         options: {
@@ -338,8 +342,7 @@ export default defineComponent({
         },
       }),
       propsForm = ref({
-        // rule: [],
-        rule: configField({ t }),
+        rule: [],
         api: {},
         value: null,
         options: {
@@ -441,8 +444,8 @@ export default defineComponent({
         });
 
         activeRule.value = rule;
-
-        propsForm.value.rule = rule.config.config.props();
+        // 配置props属性
+        propsForm.value.rule = rule.config.config.props(rule, {t, api: dragForm.value.api});
         const formData = { ...rule.props, formCreateChild: rule.children[0] };
         Object.keys(rule).forEach((k) => {
           if (['effect', 'config', 'payload', 'id', 'type'].indexOf(k) < 0)
@@ -830,6 +833,7 @@ export default defineComponent({
         activeTab.value = 'form';
       },
       setOption = (option) => {
+        console.log('setOption:', option)
         const _ = option;
         _.submitBtn = false;
         delete _.resetBtn;
@@ -838,8 +842,11 @@ export default defineComponent({
 
     dragForm.value.rule = makeDragRule(children.value);
     form.value.rule = configForm({ t });
-    baseForm.value.rule = field({ t });
-    validateForm.value.rule = validate({ t });
+    baseForm.value.rule = configField({ t });
+    validateForm.value.rule = configValidate({ t });
+
+
+
 
     onMounted(() => {
       document.body.ondrop = (e) => {
@@ -878,5 +885,11 @@ export default defineComponent({
       t,
     };
   },
+  created() {
+        document.body.ondrop = e => {
+            e.preventDefault();
+            e.stopPropagation();
+        };
+    }
 });
 </script>

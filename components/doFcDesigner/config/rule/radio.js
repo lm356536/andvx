@@ -1,5 +1,8 @@
 import uniqueId from '@form-create/utils/lib/unique';
+
 import { localeProps, makeOptionsRule, makeRequiredRule} from '../../utils/index2';
+import {  useLocale } from '../../utils/index2';
+import ZhCn from '../../locale/zh-cn';
 
 const label = '单选框';
 const name = 'radio';
@@ -9,6 +12,7 @@ export default {
     label,
     name,
     rule({t}) {
+        console.log('rule: ', t)
         const opt = t('props.option');
         return {
             type: name,
@@ -20,6 +24,7 @@ export default {
             },
             props: {},
             options: [1, 2].map(value => {
+                console.log('options:', opt)
                 return {
                     label: opt + value,
                     value,
@@ -28,6 +33,9 @@ export default {
         };
     },
     props(_, {t}) {
+        console.log('radio t: ', t)
+        // const t = useLocale(ZhCn).t
+
         return localeProps(t, name + '.props', [
             makeRequiredRule(),
             makeOptionsRule(t, 'options'),
