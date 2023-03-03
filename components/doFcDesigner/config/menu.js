@@ -30,11 +30,13 @@ import tab from './rule/tab';
 import group from './rule/group';
 import table from './rule/table';
 
-export default function createMenu() {
+export default function createMenu({t}) {
+    console.log('createMenu t:', t)
     return [
         {
             name: 'main',
-            title: '表单组件',
+           
+            title: t('menu.main'),
             list: [
                 input, inputPassword, inputTextArea,
                 number, radio, checkbox,
@@ -46,14 +48,14 @@ export default function createMenu() {
         },
         {
             name: 'aide',
-            title: '辅助组件',
+            title: t('menu.aide'),
             list: [
                 alert, button, span, divider, progress
             ]
         },
         {
             name: 'layout',
-            title: '布局组件',
+            title: t('menu.layout'),
             list: [
                 row, space, group, table, card, tab
             ]
