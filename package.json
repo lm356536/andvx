@@ -31,5 +31,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/qeelyn/andvx.git"
+  },
+  "volta": {
+    "node": "19.2.0"
   }
 }
