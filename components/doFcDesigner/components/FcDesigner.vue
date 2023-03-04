@@ -1,158 +1,3 @@
-<style>
-._fc-designer {
-  height: 100%;
-  min-height: 500px;
-  overflow: hidden;
-  cursor: default;
-  position: relative;
-}
-
-._fc-m .form-create ._fc-l-item {
-  background: #2e73ff;
-  width: 100%;
-  height: 10px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-._fc-l,
-._fc-m,
-._fc-r {
-  border-top: 1px solid #ececec;
-  box-sizing: border-box;
-  position: relative;
-}
-
-._fc-l-group {
-  padding: 0 12px;
-}
-
-._fc-l-title {
-  font-weight: 600;
-  font-size: 14px;
-  margin: 18px 0px 5px;
-}
-
-._fc-l-item {
-  display: inline-block;
-  background: #fff;
-  color: #000;
-  min-width: 70px;
-  width: 33.33%;
-  height: 70px;
-  line-height: 1;
-  text-align: center;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-._fc-l-item i {
-  font-size: 21px;
-  display: inline-block;
-}
-
-._fc-l-item ._fc-l-name {
-  font-size: 12px;
-}
-
-._fc-l-item ._fc-l-icon {
-  padding: 10px 5px 12px;
-}
-
-._fc-l-item:hover {
-  background: #2e73ff;
-  color: #fff;
-}
-
-._fc-m-tools {
-  height: 40px;
-  align-items: center;
-  display: flex;
-  justify-content: flex-end;
-  border: 1px solid #ececec;
-  border-top: 0 none;
-  background: #ffffff;
-  padding: 0 20px;
-}
-
-._fc-m-tools .fc-icon {
-  font-size: 14px;
-  margin-right: 2px;
-}
-
-._fc-r .el-tabs__nav-wrap::after {
-  height: 1px;
-  background-color: #ececec;
-}
-
-._fc-r ._fc-r-tabs {
-  display: flex;
-  padding: 0;
-  border-bottom: 1px solid #ececec;
-}
-
-._fc-r ._fc-r-tab {
-  height: 40px;
-  box-sizing: border-box;
-  line-height: 40px;
-  display: inline-block;
-  list-style: none;
-  font-size: 14px;
-  font-weight: 600;
-  color: #303133;
-  position: relative;
-  flex: 1;
-  text-align: center;
-}
-
-._fc-r ._fc-r-tab.active {
-  color: #409eff;
-  border-bottom: 2px solid #409eff;
-}
-
-.drag-box,
-.ivu-col.drag-box {
-  min-height: 60px;
-}
-
-._fc-m-drag {
-  overflow: auto;
-  padding: 2px;
-  box-sizing: border-box;
-}
-
-._fc-m-drag,
-.draggable-drag {
-  background: #fff;
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-._fc-m-drag > form,
-._fc-m-drag > form > .ant-row {
-  height: 100%;
-}
-
-._fc-dragBox {
-  background: #f5f5f5;
-  padding: 20px;
-  position: absolute;
-  top: 40px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
-.div-tools + .div-tools {
-  margin-top: 5px;
-}
-
-.ant-layout-sider-children {
-  overflow: auto;
-}
-</style>
-
 <template>
   <a-layout class="_fc-designer">
     <a-layout-sider hide-trigger class="_fc-l" width="266" style="background: #ffffff">
@@ -249,7 +94,7 @@
 
 <script>
 import { defineComponent, ref, reactive, toRefs, provide, nextTick, onMounted } from 'vue';
-import configForm from '../config/base/form';
+import form from '../config/base/form';
 import field from '../config/base/field';
 import validate from '../config/base/validate';
 import { deepCopy } from '@form-create/utils/lib/deepextend';
@@ -836,7 +681,7 @@ export default defineComponent({
 
     // #endriong
     data.dragForm.rule = methods.makeDragRule(data.children);
-    data.form.rule = configForm();
+    data.form.rule = form();
     data.baseForm.rule = field();
     data.validateForm.rule = validate();
 
@@ -854,3 +699,157 @@ export default defineComponent({
   },
 });
 </script>
+<style>
+._fc-designer {
+  height: 100%;
+  min-height: 500px;
+  overflow: hidden;
+  cursor: default;
+  position: relative;
+}
+
+._fc-m .form-create ._fc-l-item {
+  background: #2e73ff;
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+._fc-l,
+._fc-m,
+._fc-r {
+  border-top: 1px solid #ececec;
+  box-sizing: border-box;
+  position: relative;
+}
+
+._fc-l-group {
+  padding: 0 12px;
+}
+
+._fc-l-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin: 18px 0px 5px;
+}
+
+._fc-l-item {
+  display: inline-block;
+  background: #fff;
+  color: #000;
+  min-width: 70px;
+  width: 33.33%;
+  height: 70px;
+  line-height: 1;
+  text-align: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+._fc-l-item i {
+  font-size: 21px;
+  display: inline-block;
+}
+
+._fc-l-item ._fc-l-name {
+  font-size: 12px;
+}
+
+._fc-l-item ._fc-l-icon {
+  padding: 10px 5px 12px;
+}
+
+._fc-l-item:hover {
+  background: #2e73ff;
+  color: #fff;
+}
+
+._fc-m-tools {
+  height: 40px;
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  border: 1px solid #ececec;
+  border-top: 0 none;
+  background: #ffffff;
+  padding: 0 20px;
+}
+
+._fc-m-tools .fc-icon {
+  font-size: 14px;
+  margin-right: 2px;
+}
+
+._fc-r .el-tabs__nav-wrap::after {
+  height: 1px;
+  background-color: #ececec;
+}
+
+._fc-r ._fc-r-tabs {
+  display: flex;
+  padding: 0;
+  border-bottom: 1px solid #ececec;
+}
+
+._fc-r ._fc-r-tab {
+  height: 40px;
+  box-sizing: border-box;
+  line-height: 40px;
+  display: inline-block;
+  list-style: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: #303133;
+  position: relative;
+  flex: 1;
+  text-align: center;
+}
+
+._fc-r ._fc-r-tab.active {
+  color: #409eff;
+  border-bottom: 2px solid #409eff;
+}
+
+.drag-box,
+.ivu-col.drag-box {
+  min-height: 60px;
+}
+
+._fc-m-drag {
+  overflow: auto;
+  padding: 2px;
+  box-sizing: border-box;
+}
+
+._fc-m-drag,
+.draggable-drag {
+  background: #fff;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+._fc-m-drag > form,
+._fc-m-drag > form > .ant-row {
+  height: 100%;
+}
+
+._fc-dragBox {
+  background: #f5f5f5;
+  padding: 20px;
+  position: absolute;
+  top: 40px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.div-tools + .div-tools {
+  margin-top: 5px;
+}
+
+.ant-layout-sider-children {
+  overflow: auto;
+}
+</style>
