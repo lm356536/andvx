@@ -284,15 +284,13 @@ export default defineComponent({
       activeTab: 'form',
       activeRule: null,
       children: [],
-    });
-
-    const menuList = ref(menu.value || createMenu());
-    const showBaseRule = ref(false),
-      dragForm = ref({
+      menuList: menu.value || createMenu(),
+      showBaseRule: false,
+      dragForm: {
         rule: [],
         api: {},
-      }),
-      form = ref({
+      },
+      form: {
         rule: [],
         option: {
           form: {
@@ -306,8 +304,8 @@ export default defineComponent({
           },
           submitBtn: false,
         },
-      }),
-      baseForm = ref({
+      },
+      baseForm: {
         rule: [],
         api: {},
         value: null,
@@ -320,8 +318,8 @@ export default defineComponent({
             fapi.activeRule = data.activeRule;
           },
         },
-      }),
-      validateForm = ref({
+      },
+      validateForm: {
         rule: [],
         api: {},
         value: null,
@@ -334,8 +332,8 @@ export default defineComponent({
             fapi.activeRule = data.activeRule;
           },
         },
-      }),
-      propsForm = ref({
+      },
+      propsForm: {
         rule: [],
         api: {},
         value: null,
@@ -348,7 +346,9 @@ export default defineComponent({
             fapi.activeRule = data.activeRule;
           },
         },
-      });
+      },
+    });
+
     // #region method 组件方法
     const getParent = (rule) => {
         let parent = rule.__fc__.parent.rule;
@@ -438,7 +438,7 @@ export default defineComponent({
 
         data.activeRule = rule;
 
-        propsForm.value.rule = rule.config.config.props();
+        data.propsForm.rule = rule.config.config.props();
         const formData = { ...rule.props, formCreateChild: rule.children[0] };
         Object.keys(rule).forEach((k) => {
           if (['effect', 'config', 'payload', 'id', 'type'].indexOf(k) < 0)
@@ -451,19 +451,19 @@ export default defineComponent({
             });
         });
 
-        propsForm.value.value = deepCopy(formData);
+        data.propsForm.value = deepCopy(formData);
 
-        showBaseRule.value = !!rule.field;
+        data.showBaseRule = !!rule.field;
 
-        if (showBaseRule.value) {
-          baseForm.value.value = {
+        if (data.showBaseRule) {
+          data.baseForm.value = {
             field: rule.field,
             title: rule.title,
             info: rule.info,
             _control: rule._control,
           };
 
-          validateForm.value.value = {
+          data.validateForm.value = {
             validate: rule.validate ? [...rule.validate] : [],
           };
         }
@@ -702,7 +702,7 @@ export default defineComponent({
       },
       propRemoveField = (field, _, fapi) => {
         if (data.activeRule && fapi.activeRule === data.activeRule) {
-          dragForm.value.api.sync(data.activeRule);
+          data.dragForm.api.sync(data.activeRule);
           if (field.indexOf('formCreate') === 0) {
             field = field.replace('formCreate', '');
             if (!field) return;
@@ -749,39 +749,39 @@ export default defineComponent({
       addMenu = (config) => {
         if (!config.name || !config.list) return;
         let flag = true;
-        menuList.value.forEach((v, i) => {
+        data.menuList.forEach((v, i) => {
           if (v.name === config.name) {
             v.list = [].concat(v.list, config.list);
             flag = false;
           }
         });
         if (flag) {
-          menuList.value.push(config);
+          data.menuList.push(config);
         }
       },
       removeMenu = (name) => {
-        [...menuList.value].forEach((v, i) => {
+        [...data.menuList].forEach((v, i) => {
           if (v.name === name) {
-            menuList.value.splice(i, 1);
+            data.menuList.splice(i, 1);
           }
         });
       },
       setMenuItem = (name, list) => {
-        menuList.value.forEach((v) => {
+        data.menuList.forEach((v) => {
           if (v.name === name) {
             v.list = list;
           }
         });
       },
       appendMenuItem = (name, item) => {
-        menuList.value.forEach((v) => {
+        data.menuList.forEach((v) => {
           if (v.name === name) {
             v.list.push(item);
           }
         });
       },
       removeMenuItem = (item) => {
-        menuList.value.forEach((v) => {
+        data.menuList.forEach((v) => {
           let idx;
           if (is.String(item)) {
             [...v.list].forEach((menu, idx) => {
@@ -806,20 +806,20 @@ export default defineComponent({
         }
       },
       getRule = () => {
-        return parseRule(deepCopy(dragForm.value.api.rule[0].children));
+        return parseRule(deepCopy(data.dragForm.api.rule[0].children));
       },
       getJson = () => {
         return formCreate.toJson(getRule());
       },
       getOption = () => {
-        const option = deepCopy(form.value.value);
+        const option = deepCopy(data.form.value);
         delete option.submitBtn;
         return option;
       },
       setRule = (rules) => {
         data.children = loadRule(is.String(rules) ? formCreate.parseJson(rules) : rules);
         clearActiveRule();
-        dragForm.value.rule = makeDragRule(data.children);
+        data.dragForm.rule = makeDragRule(data.children);
       },
       clearActiveRule = () => {
         data.activeRule = null;
@@ -829,13 +829,13 @@ export default defineComponent({
         const _ = option;
         _.submitBtn = false;
         delete _.resetBtn;
-        form.value.value = _;
+        data.form.value = _;
       };
     // #endriong
-    dragForm.value.rule = makeDragRule(data.children);
-    form.value.rule = configForm();
-    baseForm.value.rule = field();
-    validateForm.value.rule = validate();
+    data.dragForm.rule = makeDragRule(data.children);
+    data.form.rule = configForm();
+    data.baseForm.rule = field();
+    data.validateForm.rule = validate();
 
     onMounted(() => {
       document.body.ondrop = (e) => {
@@ -846,13 +846,7 @@ export default defineComponent({
 
     return {
       ...toRefs(data),
-      menuList,
-      showBaseRule,
-      dragForm,
-      form,
-      baseForm,
-      validateForm,
-      propsForm,
+
       baseChange,
       propChange,
       // 具体没有使用到
