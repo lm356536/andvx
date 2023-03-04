@@ -58,7 +58,7 @@
           :key="activeRule ? activeRule.id : ''"
         >
           <div>
-            <a-divider v-if="showBaseRule">基础配置</a-divider>
+            <!-- <a-divider v-if="showBaseRule">基础配置</a-divider> -->
             <form-create
               v-if="showBaseRule"
               v-model:api="baseForm.api"
@@ -67,7 +67,7 @@
               :option="baseForm.options"
               @change="baseChange"
             />
-            <a-divider>属性配置</a-divider>
+            <!-- <a-divider>属性配置</a-divider> -->
             <form-create
               v-model:api="propsForm.api"
               v-model="propsForm.value"
@@ -76,7 +76,7 @@
               @change="propChange"
             />
             <!-- @removeField="propRemoveField" -->
-            <a-divider v-if="showBaseRule">验证规则</a-divider>
+            <!-- <a-divider v-if="showBaseRule">验证规则</a-divider> -->
             <form-create
               v-if="showBaseRule"
               v-model:api="validateForm.api"
@@ -123,6 +123,7 @@ export default defineComponent({
     );
     const { menu } = toRefs(props);
     const data = reactive({
+      cacheProps: {}, // 缓存属性
       moveRule: null,
       addRule: null,
       added: null,
@@ -283,8 +284,13 @@ export default defineComponent({
         });
 
         data.activeRule = rule;
-
         data.propsForm.rule = rule.config.config.props();
+        // todo 以下代码为插件本地语言改造
+        // if (!data.cacheProps[rule._id]) {
+        //   data.cacheProps[rule._id] = rule.config.config.props(rule, { t, api: data.dragForm.api });
+        // }
+        // data.propsForm.rule = data.cacheProps[rule._id];
+
         const formData = { ...rule.props, formCreateChild: rule.children[0] };
         Object.keys(rule).forEach((k) => {
           if (['effect', 'config', 'payload', 'id', 'type'].indexOf(k) < 0)
@@ -388,7 +394,7 @@ export default defineComponent({
                   top.root.children.splice(top.root.children.indexOf(top.parent) + 1, 0, copyRule);
                 },
                 active: ({ self }) => {
-                  methods.toolActive(getParent(self).parent);
+                  methods.toolActive(methods.getParent(self).parent);
                 },
               },
               children: rule.children,

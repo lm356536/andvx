@@ -30,12 +30,15 @@ import tab from './rule/tab';
 import group from './rule/group';
 import table from './rule/table';
 
+import extraInput from './rule/extra/extraInput'
+
 export default function createMenu() {
     return [
         {
             name: 'main',
             title: '表单组件',
             list: [
+                extraInput,
                 input, inputPassword, inputTextArea,
                 number, radio, checkbox,
                 date, dateRangePicker, select,

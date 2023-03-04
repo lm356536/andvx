@@ -31,9 +31,10 @@ import button from './button';
 import editor from './editor';
 import progress from './progress';
 import hidden from './hidden';
-
+import extraInput from './extra/extraInput'
 
 const ruleList = {
+    [extraInput.name]: extraInput,
     [radio.name]: radio,
     [checkbox.name]: checkbox,
     [input.name]: input,
