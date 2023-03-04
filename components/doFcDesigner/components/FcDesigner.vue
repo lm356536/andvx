@@ -350,7 +350,8 @@ export default defineComponent({
     });
 
     // #region method 组件方法
-    const getParent = (rule) => {
+    const methods = {
+      getParent(rule) {
         let parent = rule.__fc__.parent.rule;
         const config = parent.config;
         if (config && config.config.inside) {
@@ -359,7 +360,7 @@ export default defineComponent({
         }
         return { root: parent, parent: rule };
       },
-      makeDrag = (group, tag, children, on) => {
+      makeDrag(group, tag, children, on) {
         return {
           type: 'DragBox',
           wrap: {
@@ -388,21 +389,21 @@ export default defineComponent({
           on,
         };
       },
-      makeDragRule = (children) => {
+      makeDragRule(children) {
         return [
-          makeDrag(true, 'draggable', children, {
-            add: (inject, evt) => dragAdd(children, evt),
-            end: (inject, evt) => dragEnd(children, evt),
-            start: (inject, evt) => dragStart(children, evt),
-            unchoose: (inject, evt) => dragUnchoose(children, evt),
+          methods.makeDrag(true, 'draggable', children, {
+            add: (inject, evt) => methods.dragAdd(children, evt),
+            end: (inject, evt) => methods.dragEnd(children, evt),
+            start: (inject, evt) => methods.dragStart(children, evt),
+            unchoose: (inject, evt) => methods.dragUnchoose(children, evt),
           }),
         ];
       },
-      dragAdd = (children, evt) => {
+      dragAdd(children, evt) {
         const newIndex = evt.newIndex;
         const menu = evt.item._underlying_vm_;
         if (menu && menu.name) {
-          const rule = makeRule(ruleList[menu.name]);
+          const rule = methods.makeRule(ruleList[menu.name]);
           children.splice(newIndex, 0, rule);
         } else {
           if (data.addRule) {
@@ -412,7 +413,7 @@ export default defineComponent({
         }
         data.added = true;
       },
-      dragEnd = (children, { newIndex, oldIndex }) => {
+      dragEnd(children, { newIndex, oldIndex }) {
         if (!data.added && !(data.moveRule === children && newIndex === oldIndex)) {
           const rule = data.moveRule.splice(oldIndex, 1);
           children.splice(newIndex, 0, rule[0]);
@@ -421,17 +422,17 @@ export default defineComponent({
         data.addRule = null;
         data.added = false;
       },
-      dragStart = (children, evt) => {
+      dragStart(children, evt) {
         data.moveRule = children;
         data.added = false;
       },
-      dragUnchoose = (children, evt) => {
+      dragUnchoose(children, evt) {
         data.addRule = {
           children,
           oldIndex: evt.oldIndex,
         };
       },
-      toolActive = (rule) => {
+      toolActive(rule) {
         nextTick(() => {
           data.activeTab = 'props';
         });
@@ -468,7 +469,7 @@ export default defineComponent({
           };
         }
       },
-      makeRule = (config, _rule) => {
+      makeRule(config, _rule) {
         const rule = _rule || config.rule();
         if (rule?.config?.config) {
           config = rule.config.config;
@@ -483,17 +484,17 @@ export default defineComponent({
 
         if (config.drag) {
           const children = reactive([]);
-          drag = makeDrag(config.drag, rule.type, children, {
-            end: (inject, evt) => dragEnd(children, evt),
-            add: (inject, evt) => dragAdd(children, evt),
-            start: (inject, evt) => dragStart(children, evt),
-            unchoose: (inject, evt) => dragUnchoose(children, evt),
+          drag = methods.makeDrag(config.drag, rule.type, children, {
+            end: (inject, evt) => methods.dragEnd(children, evt),
+            add: (inject, evt) => methods.dragAdd(children, evt),
+            start: (inject, evt) => methods.dragStart(children, evt),
+            unchoose: (inject, evt) => methods.dragUnchoose(children, evt),
           });
           rule.children.push(drag);
         }
 
         if (config.children && !_rule) {
-          const child = makeRule(ruleList[config.children], null);
+          const child = methods.makeRule(ruleList[config.children], null);
           (drag || rule).children.push(child);
         }
 
@@ -511,38 +512,38 @@ export default defineComponent({
               inject: true,
               on: {
                 delete: ({ self }) => {
-                  getParent(self).parent.__fc__.rm();
-                  clearActiveRule();
+                  methods.getParent(self).parent.__fc__.rm();
+                  methods.clearActiveRule();
                 },
                 addComponent: ({ self }) => {
-                  const top = getParent(self);
+                  const top = methods.getParent(self);
                   top.root.children.splice(
                     top.root.children.indexOf(top.parent) + 1,
                     0,
-                    makeRule(top.parent.config.config)
+                    methods.makeRule(top.parent.config.config)
                   );
                 },
                 addChild: ({ self }) => {
-                  const top = getParent(self);
+                  const top = methods.getParent(self);
                   const config = top.parent.config.config;
                   const item = ruleList[config.children];
                   if (!item) return;
                   (!config.drag ? top.parent : top.parent.children[0]).children[0].children.push(
-                    makeRule(item)
+                    methods.makeRule(item)
                   );
                 },
                 copy: ({ self }) => {
-                  const top = getParent(self),
+                  const top = methods.getParent(self),
                     copyParent = formCreate.copyRule(top.parent),
-                    copyRule = makeRule(top.parent.config.config);
-                  mergeCopyRule(copyRule, copyParent);
+                    copyRule = methods.makeRule(top.parent.config.config);
+                  methods.mergeCopyRule(copyRule, copyParent);
                   if (copyRule.slot) {
                     copyRule.slot = `slot-${uniqueId()}`;
                   }
                   top.root.children.splice(top.root.children.indexOf(top.parent) + 1, 0, copyRule);
                 },
                 active: ({ self }) => {
-                  toolActive(getParent(self).parent);
+                  methods.toolActive(getParent(self).parent);
                 },
               },
               children: rule.children,
@@ -564,14 +565,14 @@ export default defineComponent({
             on: {
               delete: ({ self }) => {
                 self.__fc__.rm();
-                clearActiveRule();
+                methods.clearActiveRule();
               },
               addComponent: ({ self }) => {
-                const top = getParent(self);
+                const top = methods.getParent(self);
                 top.root.children.splice(
                   top.root.children.indexOf(top.parent) + 1,
                   0,
-                  makeRule(self.children[0].config.config)
+                  methods.makeRule(self.children[0].config.config)
                 );
               },
               addChild: ({ self }) => {
@@ -581,24 +582,24 @@ export default defineComponent({
                 (!config.drag ? self : self.children[0]).children[0].children.push(makeRule(item));
               },
               copy: ({ self }) => {
-                const top = getParent(self),
+                const top = methods.getParent(self),
                   copyParent = formCreate.copyRule(top.parent),
-                  copyRule = makeRule(self.children[0].config.config);
+                  copyRule = methods.makeRule(self.children[0].config.config);
                 if (copyRule.slot) {
                   copyRule.slot = `slot-${uniqueId()}`;
                 }
-                mergeCopyRule(copyRule, copyParent);
+                methods.mergeCopyRule(copyRule, copyParent);
                 top.root.children.splice(top.root.children.indexOf(top.parent) + 1, 0, copyRule);
               },
               active: ({ self }) => {
-                toolActive(self.children[0]);
+                methods.toolActive(self.children[0]);
               },
             },
             children: [rule],
           };
         }
       },
-      mergeCopyRule = (copyRule, parentRule, isChildren) => {
+      mergeCopyRule(copyRule, parentRule, isChildren) {
         let isTrue = false;
         if (!isTrue) {
           if (copyRule.children) {
@@ -607,7 +608,7 @@ export default defineComponent({
                 isTrue = true;
                 cr.children.push(...parentRule.children[index].children);
               } else {
-                isTrue = mergeCopyRule(cr, parentRule.children[index], true);
+                isTrue = methods.mergeCopyRule(cr, parentRule.children[index], true);
               }
             });
           }
@@ -619,7 +620,7 @@ export default defineComponent({
         }
         return isTrue;
       },
-      loadRule = (rules) => {
+      loadRule(rules) {
         const loadRuleValue = [];
         rules.forEach((rule) => {
           if (is.String(rule)) {
@@ -633,7 +634,7 @@ export default defineComponent({
             delete rule.control;
           }
           if (config) {
-            rule = makeRule(config, rule);
+            rule = methods.makeRule(config, rule);
             if (_children) {
               let children = rule.children[0].children;
 
@@ -643,13 +644,13 @@ export default defineComponent({
               children.push(...loadRule(_children));
             }
           } else if (_children) {
-            rule.children = loadRule(_children);
+            rule.children = methods.loadRule(_children);
           }
           loadRuleValue.push(rule);
         });
         return loadRuleValue;
       },
-      parseRule = (children) => {
+      parseRule(children) {
         return [...children].reduce((initial, rule) => {
           if (is.String(rule)) {
             initial.push(rule);
@@ -667,7 +668,7 @@ export default defineComponent({
           if (!rule) return initial;
           rule = { ...rule };
           if (rule.children.length) {
-            rule.children = parseRule(rule.children);
+            rule.children = methods.parseRule(rule.children);
           }
 
           delete rule.id;
@@ -695,12 +696,12 @@ export default defineComponent({
           return initial;
         }, []);
       },
-      baseChange = (field, value, _, fapi, flag) => {
+      baseChange(field, value, _, fapi, flag) {
         if (!flag && data.activeRule && fapi.activeRule === data.activeRule) {
           data.activeRule[field] = value;
         }
       },
-      propRemoveField = (field, _, fapi) => {
+      propRemoveField(field, _, fapi) {
         if (data.activeRule && fapi.activeRule === data.activeRule) {
           data.dragForm.api.sync(data.activeRule);
           if (field.indexOf('formCreate') === 0) {
@@ -721,7 +722,7 @@ export default defineComponent({
           }
         }
       },
-      propChange = (field, value, _, fapi, flag) => {
+      propChange(field, value, _, fapi, flag) {
         if (!flag && data.activeRule && fapi.activeRule === data.activeRule) {
           if (field.indexOf('formCreate') === 0) {
             field = field.replace('formCreate', '');
@@ -741,12 +742,12 @@ export default defineComponent({
           }
         }
       },
-      validateChange = (field, value, _, fapi, flag) => {
+      validateChange(field, value, _, fapi, flag) {
         if (data.activeRule && fapi.activeRule === data.activeRule) {
           data.activeRule.validate = value;
         }
       },
-      addMenu = (config) => {
+      addMenu(config) {
         if (!config.name || !config.list) return;
         let flag = true;
         data.menuList.forEach((v, i) => {
@@ -759,28 +760,28 @@ export default defineComponent({
           data.menuList.push(config);
         }
       },
-      removeMenu = (name) => {
+      removeMenu(name) {
         [...data.menuList].forEach((v, i) => {
           if (v.name === name) {
             data.menuList.splice(i, 1);
           }
         });
       },
-      setMenuItem = (name, list) => {
+      setMenuItem(name, list) {
         data.menuList.forEach((v) => {
           if (v.name === name) {
             v.list = list;
           }
         });
       },
-      appendMenuItem = (name, item) => {
+      appendMenuItem(name, item) {
         data.menuList.forEach((v) => {
           if (v.name === name) {
             v.list.push(item);
           }
         });
       },
-      removeMenuItem = (item) => {
+      removeMenuItem(item) {
         data.menuList.forEach((v) => {
           let idx;
           if (is.String(item)) {
@@ -796,7 +797,7 @@ export default defineComponent({
           }
         });
       },
-      addComponent = (data) => {
+      addComponent(data) {
         if (Array.isArray(data)) {
           data.forEach((v) => {
             ruleList[v.name] = v;
@@ -805,34 +806,36 @@ export default defineComponent({
           ruleList[data.name] = data;
         }
       },
-      getRule = () => {
-        return parseRule(deepCopy(data.dragForm.api.rule[0].children));
+      getRule() {
+        return methods.parseRule(deepCopy(data.dragForm.api.rule[0].children));
       },
-      getJson = () => {
+      getJson() {
         return formCreate.toJson(getRule());
       },
-      getOption = () => {
+      getOption() {
         const option = deepCopy(data.form.value);
         delete option.submitBtn;
         return option;
       },
-      setRule = (rules) => {
-        data.children = loadRule(is.String(rules) ? formCreate.parseJson(rules) : rules);
-        clearActiveRule();
-        data.dragForm.rule = makeDragRule(data.children);
+      setRule(rules) {
+        data.children = methods.loadRule(is.String(rules) ? formCreate.parseJson(rules) : rules);
+        methods.clearActiveRule();
+        data.dragForm.rule = methods.makeDragRule(data.children);
       },
-      clearActiveRule = () => {
+      clearActiveRule() {
         data.activeRule = null;
         data.activeTab = 'form';
       },
-      setOption = (option) => {
+      setOption(option) {
         const _ = option;
         _.submitBtn = false;
         delete _.resetBtn;
         data.form.value = _;
-      };
+      },
+    };
+
     // #endriong
-    data.dragForm.rule = makeDragRule(data.children);
+    data.dragForm.rule = methods.makeDragRule(data.children);
     data.form.rule = configForm();
     data.baseForm.rule = field();
     data.validateForm.rule = validate();
@@ -846,24 +849,7 @@ export default defineComponent({
 
     return {
       ...toRefs(data),
-
-      baseChange,
-      propChange,
-      // 具体没有使用到
-      // propRemoveField,
-      validateChange,
-      // 开放的api
-      addMenu,
-      removeMenu,
-      setMenuItem,
-      appendMenuItem,
-      removeMenuItem,
-      addComponent,
-      getRule,
-      getJson,
-      getOption,
-      setRule,
-      setOption,
+      ...methods,
     };
   },
 });
