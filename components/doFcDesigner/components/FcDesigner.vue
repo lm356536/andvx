@@ -181,11 +181,7 @@
       </div>
       <div class="_fc-dragBox">
         <div class="_fc-m-drag">
-          <form-create
-            :rule="dragForm.rule"
-            :option="form.value"
-            v-model:api="dragForm.api"
-          />
+          <form-create :rule="dragForm.rule" :option="form.value" v-model:api="dragForm.api" />
         </div>
       </div>
     </a-layout-content>
@@ -209,11 +205,7 @@
           </div>
         </div>
         <div v-show="activeTab === 'form'" style="padding: 20px">
-          <form-create
-            :rule="form.rule"
-            :option="form.option"
-            v-model="form.value.form"
-          />
+          <form-create :rule="form.rule" :option="form.option" v-model="form.value.form" />
         </div>
         <div
           v-show="activeTab === 'props'"
@@ -256,51 +248,46 @@
 </template>
 
 <script>
-import {
-  defineComponent,
-  ref,
-  reactive,
-  toRefs,
-  provide,
-  nextTick,
-  onMounted,
-} from "vue";
-import configForm from "../config/base/form";
-import field from "../config/base/field";
-import validate from "../config/base/validate";
-import { deepCopy } from "@form-create/utils/lib/deepextend";
-import is from "@form-create/utils/lib/type";
-import { lower } from "@form-create/utils/lib/tocase";
-import ruleList from "../config/rule";
-import draggable from "vuedraggable/src/vuedraggable";
-import formCreate from "@form-create/ant-design-vue";
-import createMenu from "../config/menu";
-import { upper } from "../utils/index";
-import uniqueId from "@form-create/utils/lib/unique";
+import { defineComponent, ref, reactive, toRefs, provide, nextTick, onMounted } from 'vue';
+import configForm from '../config/base/form';
+import field from '../config/base/field';
+import validate from '../config/base/validate';
+import { deepCopy } from '@form-create/utils/lib/deepextend';
+import is from '@form-create/utils/lib/type';
+import { lower } from '@form-create/utils/lib/tocase';
+import ruleList from '../config/rule';
+import draggable from 'vuedraggable/src/vuedraggable';
+import formCreate from '@form-create/ant-design-vue';
+import createMenu from '../config/menu';
+import { upper } from '../utils/index';
+import uniqueId from '@form-create/utils/lib/unique';
 
 export default defineComponent({
-  name: "FcDesigner",
+  name: 'FcDesigner',
   components: {
     draggable,
     FormCreate: formCreate.$form(),
   },
-  props: ["menu"],
+  props: ['menu'],
   setup(props) {
     provide(
-      "fcx",
+      'fcx',
       ref({
         active: null,
       })
     );
-    const { menu } = toRefs(props),
-      moveRule = ref(),
-      addRule = ref(),
-      added = ref(),
-      activeTab = ref("form"),
-      activeRule = ref(),
-      children = ref([]),
-      menuList = ref(menu.value || createMenu()),
-      showBaseRule = ref(false),
+    const { menu } = toRefs(props);
+    const data = reactive({
+      moveRule: null,
+      addRule: null,
+      added: null,
+      activeTab: 'form',
+      activeRule: null,
+      children: [],
+    });
+
+    const menuList = ref(menu.value || createMenu());
+    const showBaseRule = ref(false),
       dragForm = ref({
         rule: [],
         api: {},
@@ -309,13 +296,13 @@ export default defineComponent({
         rule: [],
         option: {
           form: {
-            layout: "vertical",
+            layout: 'vertical',
           },
           submitBtn: false,
         },
         value: {
           form: {
-            layout: "vertical",
+            layout: 'vertical',
           },
           submitBtn: false,
         },
@@ -326,11 +313,11 @@ export default defineComponent({
         value: null,
         options: {
           form: {
-            layout: "vertical",
+            layout: 'vertical',
           },
           submitBtn: false,
           mounted: (fapi) => {
-            fapi.activeRule = activeRule.value;
+            fapi.activeRule = data.activeRule;
           },
         },
       }),
@@ -340,11 +327,11 @@ export default defineComponent({
         value: null,
         options: {
           form: {
-            layout: "vertical",
+            layout: 'vertical',
           },
           submitBtn: false,
           mounted: (fapi) => {
-            fapi.activeRule = activeRule.value;
+            fapi.activeRule = data.activeRule;
           },
         },
       }),
@@ -354,15 +341,15 @@ export default defineComponent({
         value: null,
         options: {
           form: {
-            layout: "vertical",
+            layout: 'vertical',
           },
           submitBtn: false,
           mounted: (fapi) => {
-            fapi.activeRule = activeRule.value;
+            fapi.activeRule = data.activeRule;
           },
         },
       });
-
+    // #region method 组件方法
     const getParent = (rule) => {
         let parent = rule.__fc__.parent.rule;
         const config = parent.config;
@@ -374,7 +361,7 @@ export default defineComponent({
       },
       makeDrag = (group, tag, children, on) => {
         return {
-          type: "DragBox",
+          type: 'DragBox',
           wrap: {
             show: false,
           },
@@ -385,13 +372,13 @@ export default defineComponent({
           props: {
             rule: {
               props: {
-                group: group === true ? "default" : group,
-                ghostClass: "ghost",
+                group: group === true ? 'default' : group,
+                ghostClass: 'ghost',
                 animation: 150,
-                handle: "._fc-drag-btn",
+                handle: '._fc-drag-btn',
                 emptyInsertThreshold: 0,
-                direction: "vertical",
-                itemKey: "type",
+                direction: 'vertical',
+                itemKey: 'type',
                 modelValue: children,
               },
             },
@@ -403,7 +390,7 @@ export default defineComponent({
       },
       makeDragRule = (children) => {
         return [
-          makeDrag(true, "draggable", children, {
+          makeDrag(true, 'draggable', children, {
             add: (inject, evt) => dragAdd(children, evt),
             end: (inject, evt) => dragEnd(children, evt),
             start: (inject, evt) => dragStart(children, evt),
@@ -418,49 +405,49 @@ export default defineComponent({
           const rule = makeRule(ruleList[menu.name]);
           children.splice(newIndex, 0, rule);
         } else {
-          if (addRule.value) {
-            const rule = addRule.value.children.splice(addRule.value.oldIndex, 1);
+          if (data.addRule) {
+            const rule = data.addRule.children.splice(data.addRule.oldIndex, 1);
             children.splice(newIndex, 0, rule[0]);
           }
         }
-        added.value = true;
+        data.added = true;
       },
       dragEnd = (children, { newIndex, oldIndex }) => {
-        if (!added.value && !(moveRule.value === children && newIndex === oldIndex)) {
-          const rule = moveRule.value.splice(oldIndex, 1);
+        if (!data.added && !(data.moveRule === children && newIndex === oldIndex)) {
+          const rule = data.moveRule.splice(oldIndex, 1);
           children.splice(newIndex, 0, rule[0]);
         }
-        moveRule.value = null;
-        addRule.value = null;
-        added.value = false;
+        data.moveRule = null;
+        data.addRule = null;
+        data.added = false;
       },
       dragStart = (children, evt) => {
-        moveRule.value = children;
-        added.value = false;
+        data.moveRule = children;
+        data.added = false;
       },
       dragUnchoose = (children, evt) => {
-        addRule.value = {
+        data.addRule = {
           children,
           oldIndex: evt.oldIndex,
         };
       },
       toolActive = (rule) => {
         nextTick(() => {
-          activeTab.value = "props";
+          data.activeTab = 'props';
         });
 
-        activeRule.value = rule;
+        data.activeRule = rule;
 
         propsForm.value.rule = rule.config.config.props();
         const formData = { ...rule.props, formCreateChild: rule.children[0] };
         Object.keys(rule).forEach((k) => {
-          if (["effect", "config", "payload", "id", "type"].indexOf(k) < 0)
-            formData["formCreate" + upper(k)] = rule[k];
+          if (['effect', 'config', 'payload', 'id', 'type'].indexOf(k) < 0)
+            formData['formCreate' + upper(k)] = rule[k];
         });
-        ["props", "effect"].forEach((name) => {
+        ['props', 'effect'].forEach((name) => {
           rule[name] &&
             Object.keys(rule[name]).forEach((k) => {
-              formData["formCreate" + upper(name) + ">" + k] = rule[name][k];
+              formData['formCreate' + upper(name) + '>' + k] = rule[name][k];
             });
         });
 
@@ -513,7 +500,7 @@ export default defineComponent({
         if (config.inside) {
           rule.children = [
             {
-              type: "DragTool",
+              type: 'DragTool',
               props: {
                 dragBtn: config.dragBtn !== false,
                 children: config.children,
@@ -540,10 +527,9 @@ export default defineComponent({
                   const config = top.parent.config.config;
                   const item = ruleList[config.children];
                   if (!item) return;
-                  (!config.drag
-                    ? top.parent
-                    : top.parent.children[0]
-                  ).children[0].children.push(makeRule(item));
+                  (!config.drag ? top.parent : top.parent.children[0]).children[0].children.push(
+                    makeRule(item)
+                  );
                 },
                 copy: ({ self }) => {
                   const top = getParent(self),
@@ -553,11 +539,7 @@ export default defineComponent({
                   if (copyRule.slot) {
                     copyRule.slot = `slot-${uniqueId()}`;
                   }
-                  top.root.children.splice(
-                    top.root.children.indexOf(top.parent) + 1,
-                    0,
-                    copyRule
-                  );
+                  top.root.children.splice(top.root.children.indexOf(top.parent) + 1, 0, copyRule);
                 },
                 active: ({ self }) => {
                   toolActive(getParent(self).parent);
@@ -569,7 +551,7 @@ export default defineComponent({
           return rule;
         } else {
           return {
-            type: "DragTool",
+            type: 'DragTool',
             props: {
               dragBtn: config.dragBtn !== false,
               children: config.children,
@@ -596,9 +578,7 @@ export default defineComponent({
                 const config = self.children[0].config.config;
                 const item = ruleList[config.children];
                 if (!item) return;
-                (!config.drag ? self : self.children[0]).children[0].children.push(
-                  makeRule(item)
-                );
+                (!config.drag ? self : self.children[0]).children[0].children.push(makeRule(item));
               },
               copy: ({ self }) => {
                 const top = getParent(self),
@@ -608,11 +588,7 @@ export default defineComponent({
                   copyRule.slot = `slot-${uniqueId()}`;
                 }
                 mergeCopyRule(copyRule, copyParent);
-                top.root.children.splice(
-                  top.root.children.indexOf(top.parent) + 1,
-                  0,
-                  copyRule
-                );
+                top.root.children.splice(top.root.children.indexOf(top.parent) + 1, 0, copyRule);
               },
               active: ({ self }) => {
                 toolActive(self.children[0]);
@@ -627,7 +603,7 @@ export default defineComponent({
         if (!isTrue) {
           if (copyRule.children) {
             copyRule.children.forEach((cr, index) => {
-              if (cr.type === "DragBox") {
+              if (cr.type === 'DragBox') {
                 isTrue = true;
                 cr.children.push(...parentRule.children[index].children);
               } else {
@@ -678,12 +654,12 @@ export default defineComponent({
           if (is.String(rule)) {
             initial.push(rule);
             return initial;
-          } else if (rule.type === "DragBox") {
+          } else if (rule.type === 'DragBox') {
             initial.push(...parseRule(rule.children));
             return initial;
-          } else if (rule.type === "DragTool") {
+          } else if (rule.type === 'DragTool') {
             rule = rule.children[0];
-            if (rule.type === "DragBox") {
+            if (rule.type === 'DragBox') {
               initial.push(...parseRule(rule.children));
               return initial;
             }
@@ -720,54 +696,54 @@ export default defineComponent({
         }, []);
       },
       baseChange = (field, value, _, fapi, flag) => {
-        if (!flag && activeRule.value && fapi.activeRule === activeRule.value) {
-          activeRule.value[field] = value;
+        if (!flag && data.activeRule && fapi.activeRule === data.activeRule) {
+          data.activeRule[field] = value;
         }
       },
       propRemoveField = (field, _, fapi) => {
-        if (activeRule.value && fapi.activeRule === activeRule.value) {
-          dragForm.value.api.sync(activeRule.value);
-          if (field.indexOf("formCreate") === 0) {
-            field = field.replace("formCreate", "");
+        if (data.activeRule && fapi.activeRule === data.activeRule) {
+          dragForm.value.api.sync(data.activeRule);
+          if (field.indexOf('formCreate') === 0) {
+            field = field.replace('formCreate', '');
             if (!field) return;
             field = lower(field);
-            if (field.indexOf("effect") === 0 && field.indexOf(">") > -1) {
-              delete activeRule.value.effect[field.split(">")[1]];
-            } else if (field.indexOf("props") === 0 && field.indexOf(">") > -1) {
-              delete activeRule.value.props[field.split(">")[1]];
-            } else if (field === "child") {
-              activeRule.value.children.splice(0, 1);
+            if (field.indexOf('effect') === 0 && field.indexOf('>') > -1) {
+              delete data.activeRule.effect[field.split('>')[1]];
+            } else if (field.indexOf('props') === 0 && field.indexOf('>') > -1) {
+              delete data.activeRule.props[field.split('>')[1]];
+            } else if (field === 'child') {
+              data.activeRule.children.splice(0, 1);
             } else if (field) {
-              activeRule.value[field] = undefined;
+              data.activeRule[field] = undefined;
             }
           } else {
-            delete activeRule.value.props[field];
+            delete data.activeRule.props[field];
           }
         }
       },
       propChange = (field, value, _, fapi, flag) => {
-        if (!flag && activeRule.value && fapi.activeRule === activeRule.value) {
-          if (field.indexOf("formCreate") === 0) {
-            field = field.replace("formCreate", "");
+        if (!flag && data.activeRule && fapi.activeRule === data.activeRule) {
+          if (field.indexOf('formCreate') === 0) {
+            field = field.replace('formCreate', '');
             if (!field) return;
             field = lower(field);
-            if (field.indexOf("effect") === 0 && field.indexOf(">") > -1) {
-              activeRule.value.effect[field.split(">")[1]] = value;
-            } else if (field.indexOf("props") === 0 && field.indexOf(">") > -1) {
-              activeRule.value.props[field.split(">")[1]] = value;
-            } else if (field === "child") {
-              activeRule.value.children[0] = value;
+            if (field.indexOf('effect') === 0 && field.indexOf('>') > -1) {
+              data.activeRule.effect[field.split('>')[1]] = value;
+            } else if (field.indexOf('props') === 0 && field.indexOf('>') > -1) {
+              data.activeRule.props[field.split('>')[1]] = value;
+            } else if (field === 'child') {
+              data.activeRule.children[0] = value;
             } else {
-              activeRule.value[field] = value;
+              data.activeRule[field] = value;
             }
           } else {
-            activeRule.value.props[field] = value;
+            data.activeRule.props[field] = value;
           }
         }
       },
       validateChange = (field, value, _, fapi, flag) => {
-        if (activeRule.value && fapi.activeRule === activeRule.value) {
-          activeRule.value.validate = value;
+        if (data.activeRule && fapi.activeRule === data.activeRule) {
+          data.activeRule.validate = value;
         }
       },
       addMenu = (config) => {
@@ -841,13 +817,13 @@ export default defineComponent({
         return option;
       },
       setRule = (rules) => {
-        children.value = loadRule(is.String(rules) ? formCreate.parseJson(rules) : rules);
+        data.children = loadRule(is.String(rules) ? formCreate.parseJson(rules) : rules);
         clearActiveRule();
-        dragForm.value.rule = makeDragRule(children.value);
+        dragForm.value.rule = makeDragRule(data.children);
       },
       clearActiveRule = () => {
-        activeRule.value = null;
-        activeTab.value = "form";
+        data.activeRule = null;
+        data.activeTab = 'form';
       },
       setOption = (option) => {
         const _ = option;
@@ -855,8 +831,8 @@ export default defineComponent({
         delete _.resetBtn;
         form.value.value = _;
       };
-
-    dragForm.value.rule = makeDragRule(children.value);
+    // #endriong
+    dragForm.value.rule = makeDragRule(data.children);
     form.value.rule = configForm();
     baseForm.value.rule = field();
     validateForm.value.rule = validate();
@@ -869,9 +845,8 @@ export default defineComponent({
     });
 
     return {
+      ...toRefs(data),
       menuList,
-      activeTab,
-      activeRule,
       showBaseRule,
       dragForm,
       form,
