@@ -1,6 +1,12 @@
 <template>
   <div class="_fc_table_opt">
-    <a-table :data-source="modelValue" border size="small" style="width: 100%">
+    <a-table
+      :data-source="modelValue"
+      bordered
+      size="small"
+      :pagination="false"
+      style="width: 100%"
+    >
       <template v-for="(col, idx) in column" :key="col.label + idx">
         <a-table-column :title="col.label" data-index="dataIndex">
           <template #default="{ record }">
@@ -19,7 +25,7 @@
         </template>
       </a-table-column>
     </a-table>
-    <a-button link type="primary" @click="add"> <i class="fc-icon icon-add"></i> 添加 </a-button>
+    <a-button type="link" @click="add"> <i class="fc-icon icon-add"></i> 添加 </a-button>
   </div>
 </template>
 
