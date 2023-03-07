@@ -430,7 +430,9 @@ export default defineComponent({
                 const config = self.children[0].config.config;
                 const item = ruleList[config.children];
                 if (!item) return;
-                (!config.drag ? self : self.children[0]).children[0].children.push(makeRule(item));
+                (!config.drag ? self : self.children[0]).children[0].children.push(
+                  methods.makeRule(item)
+                );
               },
               copy: ({ self }) => {
                 const top = methods.getParent(self),
