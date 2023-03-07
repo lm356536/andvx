@@ -11,7 +11,8 @@ import './style/index.css';
 import draggable from 'vuedraggable/src/vuedraggable';
 import unique from '@form-create/utils/lib/unique';
 import GroupTable from './components/GroupTable.vue';
-
+import TableOptions from './components/TableOptions.vue';
+formCreate.component('TableOptions', TableOptions)
 formCreate.component('draggable', draggable);
 formCreate.component(DragTool.name, DragTool);
 formCreate.component(DragBox.name, DragBox);
