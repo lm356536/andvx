@@ -126,13 +126,17 @@ export function makeOptionsRule( to, flag) {
     }
 
     return {
+
         type: 'radio',
         title: '数据来源',
         field: '_optionType',
+        // field: 'formCreateDataSourceType',
         value: flag !== false ? 2 : 0,
+        
         options,
         props: {
-            type: 'button'
+            optionType: 'button',
+            size: 'small'
         },
         control
     };

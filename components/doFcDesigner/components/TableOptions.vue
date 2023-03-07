@@ -15,7 +15,6 @@
               v-bind:value="record[col.key]"
               @Update:value="(n) => ((record[col.key] = n), onInput(record))"
             ></a-input>
-            <!-- @Update:modelValue="(n) => ((record[col.key] = n), onInput(record))" -->
           </template>
         </a-table-column>
       </template>
