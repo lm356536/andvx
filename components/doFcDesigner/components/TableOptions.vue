@@ -4,7 +4,6 @@
       <template v-for="(col, idx) in column" :key="col.label + idx">
         <a-table-column :title="col.label" data-index="dataIndex">
           <template #default="{ record }">
-            {{ record }}
             <a-input
               size="small"
               v-bind:value="record[col.key]"
