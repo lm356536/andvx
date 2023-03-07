@@ -10,11 +10,13 @@
       <template v-for="(col, idx) in column" :key="col.label + idx">
         <a-table-column :title="col.label" data-index="dataIndex">
           <template #default="{ record }">
-            <a-input
-              size="small"
-              v-bind:value="record[col.key]"
-              @Update:value="(n) => ((record[col.key] = n), onInput(record))"
-            ></a-input>
+            <a-form-item>
+              <a-input
+                size="small"
+                v-bind:value="record[col.key]"
+                @Update:value="(n) => ((record[col.key] = n), onInput(record))"
+              ></a-input
+            ></a-form-item>
           </template>
         </a-table-column>
       </template>
@@ -62,6 +64,7 @@ export default defineComponent({
       }
     },
     input() {
+      // 更新表单中的数据
       this.$emit('update:modelValue', this.modelValue);
     },
     add() {
@@ -71,7 +74,6 @@ export default defineComponent({
           return initial;
         }, {})
       );
-      console.log('add:', this.modelValue);
     },
     del(idx) {
       this.modelValue.splice(idx, 1);

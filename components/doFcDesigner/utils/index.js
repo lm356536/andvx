@@ -1,85 +1,15 @@
-
-// export function makeOptionsRule(to) {
-
-//     return {
-//         type: 'radio',
-//         title: '数据来源',
-//         field: 'formCreateDataSourceType',
-//         value: 'options',
-//         options: [
-//             { 'label': '静态数据', 'value': 'options' },
-//             { 'label': '接口数据', 'value': 'fetch' },
-//             { label: '字典', value: 'dictionary' },
-//         ],
-//         props: {
-//             optionType: 'button'
-//         },
-//         control: [
-//             // {
-//             //     value: 'options',
-//             //     rule: [
-//             //         {
-//             //             type: 'struct',
-//             //             field: 'formCreate' + upper(to).replace('.', '>'),
-//             //             props: { defaultValue: [] }
-//             //         },
-//             //     ],
-//             // },
-//             {
-//                 value: 'fetch',
-//                 rule: [
-//                     {
-//                         type: 'fetch',
-//                         field: 'formCreateEffect>fetch',
-//                         props: {
-//                             to
-//                         }
-//                     }
-//                 ]
-//             }, 
-//             {
-//                 value: 'dictionary',
-//                 rule: [
-//                     {
-//                         type: 'object',
-//                         field: 'formCreateTypeCodes',
-//                         native: true,
-//                         props: {
-//                             options: {
-//                                 form: {
-//                                     layout: "vertical",
-//                                 },
-//                                 submitBtn: false,
-//                             },
-//                             rule: [
-//                                 {
-//                                     type: 'input',
-//                                     field: 'code',
-//                                     title: '数据源来源CODE',
-//                                 },
-//                                 {
-//                                     type: 'input',
-//                                     field: 'value',
-//                                     title: '数据源项Key',
-//                                 },
-//                                 {
-//                                     type: 'input',
-//                                     field: 'label',
-//                                     title: '数据源项Label',
-//                                 },
-//                             ]
-//                         }
-//                     },
-//                 ]
-//             }
-//         ]
-
-//     };
-// }
-
-
-// 增加事件设置  但感觉事件没啥用
-
+/**
+ * 是否必填
+ * @returns 
+ */
+export function makeRequiredRule() {
+    return {
+        type: 'Required', field: 'formCreate$required', title: '是否必填'
+    };
+}
+/**
+ * 设置组件选项rule
+ */
 export function makeOptionsRule( to, flag) {
     const options = [
         {'label': 'JSON数据', 'value': 0},
