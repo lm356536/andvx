@@ -20,7 +20,7 @@
           </template>
         </a-table-column>
       </template>
-      <a-table-column min-width="50" align="center" fixed="right" title="操作">
+      <a-table-column minWidth="50" align="center" fixed="right" title="操作">
         <template #default="{ record }">
           <i class="fc-icon icon-delete" @click="del(record.$index)"></i>
         </template>

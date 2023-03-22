@@ -1,13 +1,13 @@
 {
-  "name": "andvx",
-  "version": "0.3.0",
+  "name": "andvxs",
+  "version": "0.1.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
     "dev-f": "vite --force"
   },
-  "description": "基于 ant design vue 扩展一些组件",
+  "description": "基于ant-design-vue3组件扩展，二次封装",
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
     "@form-create/ant-design-vue": "3.1.5",
@@ -27,10 +27,10 @@
     "vuex": "4.0.2",
     "vuex-persistedstate": "4.1.0"
   },
-  "author": "xhyu",
+  "author": "lm356536",
   "repository": {
     "type": "git",
-    "url": "https://github.com/qeelyn/andvx.git"
+    "url": "https://github.com/lm356536/andvxs.git"
   },
   "volta": {
     "node": "19.2.0"
